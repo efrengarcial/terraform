@@ -18,8 +18,9 @@ data "terraform_remote_state" "network" {
 
   config {
      bucket = "terraform-eagl"
-    key    = "network/terraform.tfstate"
-    region = "us-east-1"
+     key    = "network/terraform.tfstate"
+     region = "us-east-1"
+     profile  = "terraform"
   }
 }
 
