@@ -4,6 +4,15 @@ provider "aws" {
   profile                 = "terraform"
 }
 
+terraform {
+  backend "s3" {
+    bucket = "terraform-eagl"
+    key    = "frontend/terraform.tfstate"
+    region = "us-east-1"
+    profile  = "terraform"
+  }
+}
+
 data "terraform_remote_state" "network" {
   backend = "s3"
 
