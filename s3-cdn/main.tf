@@ -4,6 +4,15 @@ provider "aws" {
   profile                 = "terraform"
 }
 
+terraform {
+  backend "s3" {
+    bucket = "terraform-eagl"
+    key    = "s3-cdn/terraform.tfstate"
+    region = "us-east-1"
+    profile  = "terraform"
+  }
+}
+
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     domain_name = "wordpressmediaassets-eagl.s3.amazonaws.com"
