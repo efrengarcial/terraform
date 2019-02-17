@@ -45,6 +45,22 @@ chkconfig httpd on
 EOF
 }
 
+resource "aws_iam_role" "wordpress_role" {
+  name = "wordpress-role"
+
+  assume_role_policy = "${file("assumerolepolicy.json")}"
+}
+
+
+resource "aws_iam_role_policy_attachment" "AmazonS3FullAccess" {
+    role               = "${aws_iam_role.wordpress_role.name}"
+    policy_arn         = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_instance_profile" "wordpress_profile" {
+  name  = "wordpress_profile"
+  role = "${aws_iam_role.wordpress_role.name}"
+}
 
 
 module "ec2-instance" {
@@ -59,6 +75,7 @@ module "ec2-instance" {
   vpc_security_group_ids = ["${data.terraform_remote_state.network.web_dmz_security_group_id}" ]
   subnet_id              = "${data.terraform_remote_state.network.public_subnet_us_east_1a}"
   
+ iam_instance_profile = "${aws_iam_instance_profile.wordpress_profile.name}"
   
   user_data = "${local.instance-userdata}"
 
