@@ -1,4 +1,8 @@
 
+output "vpc_id" {
+  value = "${module.vpc.vpc_id}"
+}
+
 output "web_dmz_security_group_id" {
   value = "${module.web_dmz.this_security_group_id}"
 }
