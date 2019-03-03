@@ -74,3 +74,32 @@ resource "aws_lb_listener" "alb_listener" {
   }
 }
 
+
+resource "aws_launch_configuration" "autoscale_launch" {
+  image_id = "ami-0a34a9c6f5587be96"
+  instance_type = "t2.micro"
+  security_groups = ["${data.terraform_remote_state.network.web_dmz_security_group_id}"]
+  key_name = "MyEC2KeyPair"
+  associate_public_ip_address = true
+  
+  lifecycle {
+    create_before_destroy = true
+  }
+ 
+ 
+}
+
+resource "aws_autoscaling_group" "autoscale_group" {
+  launch_configuration = "${aws_launch_configuration.autoscale_launch.id}"
+  vpc_zone_identifier = [ "${data.terraform_remote_state.network.public_subnets_id}"]
+  target_group_arns = ["${aws_lb_target_group.alb_target_group.arn}"]
+  min_size = 1
+  max_size = 2
+ 
+   tag {
+    key = "Name"
+    value = "autoscale"
+    propagate_at_launch = true
+  }
+    
+}
